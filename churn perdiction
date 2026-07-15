@@ -1,0 +1,39 @@
+import pandas as pd
+from sklearn.preprocessing import LabelEncoder
+from sklearn.ensemble import RandomForestClassifier
+
+
+# Load dataset
+data = pd.read_csv("/home/WA_Fn-UseC_-Telco-Customer-Churn.csv")
+
+
+# Remove customer ID
+data = data.drop("customerID", axis=1)
+
+
+# Convert text columns into numbers
+encoder = LabelEncoder()
+
+for col in data.columns:
+    if data[col].dtype == "object":
+        data[col] = encoder.fit_transform(data[col])
+
+
+# Split input and output
+X = data.drop("Churn", axis=1)
+y = data["Churn"]
+
+
+# Train model
+model = RandomForestClassifier()
+model.fit(X, y)
+
+
+# Predict a customer
+prediction = model.predict([X.iloc[4]])
+
+
+if prediction[0] == 1:
+    print("Customer will churn")
+else:
+    print("Customer will stay")
