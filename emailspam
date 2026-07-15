@@ -1,0 +1,70 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.naive_bayes import MultinomialNB
+
+
+# Sample dataset
+data = {
+    "message": [
+        "Congratulations you won a lottery",
+        "Free prize waiting for you",
+        "Call me when you reach home",
+        "Let's meet tomorrow",
+        "You have won free money",
+        "Are you coming to college"
+    ],
+    "label": [
+        "spam",
+        "spam",
+        "ham",
+        "ham",
+        "spam",
+        "ham"
+    ]
+}
+
+df = pd.DataFrame(data)
+
+
+# Convert labels into numbers
+df["label"] = df["label"].map({
+    "ham": 0,
+    "spam": 1
+})
+
+
+# Input and output
+X = df["message"]
+y = df["label"]
+
+
+# Convert text into numbers
+vectorizer = CountVectorizer()
+
+X = vectorizer.fit_transform(X)
+
+
+# Split data
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+
+# Train model
+model = MultinomialNB()
+model.fit(X_train, y_train)
+
+
+# Test new email
+email = ["You won a free gift"]
+
+email_vector = vectorizer.transform(email)
+
+result = model.predict(email_vector)
+
+
+if result[0] == 1:
+    print("Spam Email")
+else:
+    print("Not Spam Email")
